@@ -1,84 +1,78 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import Button from '../../components/Button';
-import Input from '../../components/Input';
-import { Eye, EyeOff } from 'lucide-react';   // Make sure to install lucide-react
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-
-    if (formData.email && formData.password) {
-      localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('isLoggedIn', 'true');
+    setTimeout(() => {
       navigate('/dashboard');
-    } else {
-      setError("Please fill all fields");
-    }
-    setLoading(false);
+      setLoading(false);
+    }, 500);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl flex items-center justify-center text-7xl shadow-xl shadow-amber-500/30 mb-6">
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center text-5xl shadow-lg mb-4">
             🍽️
           </div>
-          <h1 className="text-4xl font-bold text-gray-900">Jojolapa Kitchen</h1>
-          <p className="text-gray-600 mt-2">Restaurant Management System</p>
+          <h1 className="text-3xl font-bold text-gray-900">Jojolapa Kitchen</h1>
+          <p className="text-gray-600 mt-1">Restaurant Management System</p>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200 p-10">
-          <h2 className="text-3xl font-semibold text-center mb-8">Sign In</h2>
+        <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+          <h2 className="text-2xl font-semibold text-center mb-6">Sign In</h2>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <Input
-              label="Email Address"
-              type="email"
-              placeholder="admin@jojolapa.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <input
+                type="email"
+                placeholder="admin@jojolapa.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+                required
+              />
+            </div>
 
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700">Password</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-5 py-3.5 bg-white border border-gray-300 rounded-2xl focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+                  required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
 
-            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
-            <Button 
-              type="submit" 
-              variant="primary" 
-              size="lg" 
-              className="w-full py-4 text-lg"
+            <button
+              type="submit"
               disabled={loading}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white font-medium py-2.5 rounded-lg transition-all duration-200 disabled:opacity-50"
             >
               {loading ? "Signing In..." : "Sign In"}
-            </Button>
+            </button>
           </form>
 
           <p className="text-center text-gray-600 mt-6">

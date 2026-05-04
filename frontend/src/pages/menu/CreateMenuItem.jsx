@@ -1,86 +1,108 @@
 import { useState } from 'react';
-import Button from '../../components/Button';
-import Input from '../../components/Input';
+import { useNavigate, useParams } from 'react-router-dom';
 import Modal from '../../components/Modal';
 
-const CreateMenuItem = ({ isOpen, onClose }) => {
+const CreateMenuItem = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditing = !!id;
   const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    category: '',
-    description: '',
-    image: ''
+    name: isEditing ? 'Nasi Goreng' : '',
+    category: isEditing ? 'Main Course' : '',
+    price: isEditing ? '25000' : '',
+    description: isEditing ? 'Fried rice with eggs and vegetables' : '',
+    status: isEditing ? 'Available' : 'Available'
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('New Item:', formData);
-    alert('Menu Item Created Successfully!');
-    onClose();
+    console.log(isEditing ? 'Updating item:' : 'Creating item:', formData);
+    // Use replace instead of navigate to prevent going back to the form
+    navigate('/dashboard/menu', { replace: true });
+  };
+
+  const handleClose = () => {
+    // Use replace instead of navigate to prevent going back to the form
+    navigate('/dashboard/menu', { replace: true });
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add New Menu Item">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <Input
-          label="Dish Name"
-          placeholder="e.g. Truffle Margherita Pizza"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          required
-        />
-
-        <div className="grid grid-cols-2 gap-4">
-          <Input
-            label="Price (₹)"
-            type="number"
-            placeholder="890"
-            value={formData.price}
-            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+    <Modal 
+      isOpen={true} 
+      onClose={handleClose} 
+      title={isEditing ? "Edit Menu Item" : "Create New Menu Item"}
+      size="md"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Item Name *</label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
             required
+            autoFocus
           />
-
-          <div>
-            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 block mb-1.5">
-              Category
-            </label>
-            <select
-              className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl focus:outline-none focus:border-amber-500"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              required
-            >
-              <option value="">Select Category</option>
-              <option value="Pizza">Pizza</option>
-              <option value="Main Course">Main Course</option>
-              <option value="Breakfast">Breakfast</option>
-              <option value="Dessert">Dessert</option>
-              <option value="Beverage">Beverage</option>
-            </select>
-          </div>
         </div>
 
-        <Input
-          label="Description"
-          placeholder="Short description of the dish"
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-        />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+          <select
+            value={formData.category}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500"
+            required
+          >
+            <option value="">Select category</option>
+            <option value="Main Course">Main Course</option>
+            <option value="Appetizer">Appetizer</option>
+            <option value="Noodles">Noodles</option>
+            <option value="Soup">Soup</option>
+            <option value="Beverages">Beverages</option>
+          </select>
+        </div>
 
-        <Input
-          label="Image URL"
-          placeholder="https://images.unsplash.com/..."
-          value={formData.image}
-          onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-        />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Price (Rp) *</label>
+          <input
+            type="number"
+            value={formData.price}
+            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+            required
+          />
+        </div>
 
-        <div className="flex gap-4 pt-4">
-          <Button variant="outline" className="flex-1" onClick={onClose}>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea
+            rows="3"
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <select
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500"
+          >
+            <option value="Available">Available</option>
+            <option value="Out of Stock">Out of Stock</option>
+          </select>
+        </div>
+
+        <div className="flex gap-3 pt-4">
+          <button type="submit" className="flex-1 bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-lg transition-colors">
+            {isEditing ? "Update Item" : "Create Item"}
+          </button>
+          <button type="button" onClick={handleClose} className="flex-1 border border-gray-300 hover:bg-gray-50 py-2 rounded-lg transition-colors">
             Cancel
-          </Button>
-          <Button type="submit" variant="primary" className="flex-1">
-            Create Item
-          </Button>
+          </button>
         </div>
       </form>
     </Modal>

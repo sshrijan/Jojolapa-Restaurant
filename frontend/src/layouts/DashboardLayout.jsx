@@ -1,87 +1,208 @@
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import Button from '../components/Button';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { 
+  LayoutDashboard, 
+  Utensils, 
+  Package, 
+  ShoppingCart, 
+  Tags, 
+  LogOut,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Grid3x3
+} from 'lucide-react';
 
 const DashboardLayout = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navItems = [
-    { name: "Dashboard", path: "/dashboard", icon: "📊" },
-    { name: "Menu", path: "/dashboard/menu", icon: "🍝" },
-    { name: "Categories", path: "/dashboard/categories", icon: "📂" },
-    { name: "Orders", path: "/dashboard/orders", icon: "📋" },
-    { name: "Inventory", path: "/dashboard/inventory", icon: "📦" },
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
+
+  const menuItems = [
+    { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { path: '/dashboard/menu', icon: Utensils, label: 'Menu' },
+    { path: '/dashboard/categories', icon: Tags, label: 'Categories' },
+    { path: '/dashboard/tables', icon: Grid3x3, label: 'Tables' },
+    { path: '/dashboard/orders', icon: ShoppingCart, label: 'Orders' },
+    { path: '/dashboard/inventory', icon: Package, label: 'Inventory' },
   ];
 
   const handleLogout = () => {
-    if (confirm("Are you sure you want to logout?")) {
-      navigate('/');
-    }
+    localStorage.removeItem('isLoggedIn');
+    navigate('/login');
   };
 
-  return (
-    <div className="flex h-screen bg-zinc-950 text-white overflow-hidden">
-      {/* Sidebar */}
-      <div className="w-72 bg-zinc-900 border-r border-zinc-800 p-6 flex flex-col">
-        
-        {/* Logo */}
-        <div className="flex items-center gap-3 mb-10">
-          <div className="w-11 h-11 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
-            🍽️
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Bella Vista</h1>
-            <p className="text-xs text-amber-400 -mt-1">Restaurant</p>
-          </div>
+  // Desktop Sidebar Content
+  const DesktopSidebarContent = () => (
+    <>
+      <div className="flex items-center justify-between p-4 border-b border-amber-700">
+        <div className="flex items-center space-x-2">
+          <span className="text-2xl">🍽️</span>
+          {sidebarOpen && <span className="font-bold text-lg">Jojolapa Kitchen</span>}
         </div>
+        <button 
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-1 hover:bg-amber-700 rounded-lg transition-colors"
+        >
+          {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+        </button>
+      </div>
 
-        {/* Navigation */}
-        <nav className="space-y-1.5 flex-1">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
+      <nav className="flex-1 py-4 overflow-y-auto">
+        <ul className="space-y-1 px-2">
+          {menuItems.map((item) => (
+            <li key={item.path}>
               <Link
-                key={item.name}
                 to={item.path}
-                className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[17px] font-medium transition-all ${
-                  isActive 
-                    ? 'bg-amber-500 text-black shadow-md' 
-                    : 'hover:bg-zinc-800 text-zinc-300'
-                }`}
+                className="flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-amber-700 transition-colors group"
               >
-                <span className="text-xl">{item.icon}</span>
-                <span>{item.name}</span>
+                <item.icon size={20} />
+                {sidebarOpen && <span className="text-sm">{item.label}</span>}
+                {!sidebarOpen && (
+                  <div className="absolute left-14 hidden group-hover:block bg-gray-900 text-white px-2 py-1 rounded text-sm whitespace-nowrap z-50">
+                    {item.label}
+                  </div>
+                )}
               </Link>
-            );
-          })}
-        </nav>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
-        {/* User Info & Logout */}
-        <div className="mt-auto pt-6 border-t border-zinc-800">
-          <div className="flex items-center gap-3 px-3 py-3 rounded-2xl bg-zinc-800/50">
-            <div className="w-10 h-10 bg-gradient-to-br from-zinc-600 to-zinc-700 rounded-full flex items-center justify-center text-xl">
-              👨‍💼
-            </div>
-            <div className="flex-1">
-              <p className="font-medium">Admin User</p>
-              <p className="text-xs text-zinc-500">Restaurant Manager</p>
-            </div>
-          </div>
+      <div className="p-4 border-t border-amber-700">
+        <button
+          onClick={handleLogout}
+          className="flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-amber-700 transition-colors w-full"
+        >
+          <LogOut size={20} />
+          {sidebarOpen && <span className="text-sm">Logout</span>}
+        </button>
+      </div>
+    </>
+  );
 
-          <Button
-            variant="secondary"
-            size="md"
-            className="w-full mt-4"
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
+  // Mobile Sidebar Content
+  const MobileSidebarContent = () => (
+    <>
+      <div className="flex items-center justify-between p-4 border-b border-amber-700">
+        <div className="flex items-center space-x-2">
+          <span className="text-2xl">🍽️</span>
+          <span className="font-bold text-lg">Jojolapa</span>
+        </div>
+        <button 
+          onClick={() => setMobileMenuOpen(false)}
+          className="p-1 hover:bg-amber-700 rounded-lg transition-colors"
+        >
+          <X size={20} />
+        </button>
+      </div>
+
+      <nav className="flex-1 py-4 overflow-y-auto">
+        <ul className="space-y-1 px-2">
+          {menuItems.map((item) => (
+            <li key={item.path}>
+              <Link
+                to={item.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-amber-700 transition-colors group"
+              >
+                <item.icon size={20} />
+                <span className="text-sm">{item.label}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div className="p-4 border-t border-amber-700">
+        <button
+          onClick={handleLogout}
+          className="flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-amber-700 transition-colors w-full"
+        >
+          <LogOut size={20} />
+          <span className="text-sm">Logout</span>
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Sidebar */}
+      <div 
+        className={`fixed top-0 left-0 z-50 h-full w-72 transform transition-transform duration-300 ease-in-out md:hidden ${
+          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="h-full bg-gradient-to-b from-amber-900 to-amber-800 text-white overflow-y-auto shadow-xl">
+          <MobileSidebarContent />
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-auto bg-zinc-950">
-        <Outlet />
+      {/* Mobile Backdrop */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
+        />
+      )}
+
+      {/* Desktop Sidebar */}
+      <aside className={`fixed top-0 left-0 z-40 h-screen transition-all duration-300 bg-gradient-to-b from-amber-900 to-amber-800 text-white ${sidebarOpen ? 'w-64' : 'w-20'} hidden md:block`}>
+        <div className="h-full overflow-y-auto">
+          <DesktopSidebarContent />
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className={`transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
+        {/* Top Bar */}
+        <header className="bg-white shadow-sm sticky top-0 z-30">
+          <div className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <Menu size={24} />
+            </button>
+            <h1 className="text-lg md:text-2xl font-semibold text-gray-800">Welcome back, Admin!</h1>
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-white font-semibold">
+              A
+            </div>
+          </div>
+        </header>
+
+        {/* Page Content */}
+        <main className="p-4 md:p-6 lg:p-8">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

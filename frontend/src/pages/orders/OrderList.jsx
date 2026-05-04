@@ -1,81 +1,111 @@
 import { useState } from 'react';
-import Button from '../../components/Button';
+import { Link } from 'react-router-dom';
+import { Eye, Search } from 'lucide-react';
 
 const OrderList = () => {
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('all');
 
   const orders = [
-    { id: "ORD-7842", table: "T05", customer: "Rahul Sharma", items: 3, amount: 1850, status: "Preparing", time: "10 min ago" },
-    { id: "ORD-7841", table: "T12", customer: "Priya Patel", items: 2, amount: 920, status: "Ready", time: "22 min ago" },
-    { id: "ORD-7840", table: "T03", customer: "Aman Khan", items: 4, amount: 2450, status: "Delivered", time: "45 min ago" },
-    { id: "ORD-7839", table: "T08", customer: "Sneha Gupta", items: 1, amount: 650, status: "Preparing", time: "1 hr ago" },
+    { id: '#1001', customer: 'John Doe', table: 'T01', items: 3, total: 45.50, status: 'Completed', time: '10:30 AM', date: '2024-01-15' },
+    { id: '#1002', customer: 'Jane Smith', table: 'T02', items: 2, total: 28.00, status: 'Processing', time: '11:15 AM', date: '2024-01-15' },
+    { id: '#1003', customer: 'Mike Johnson', table: 'T03', items: 4, total: 67.25, status: 'Pending', time: '11:45 AM', date: '2024-01-15' },
+    { id: '#1004', customer: 'Sarah Williams', table: 'T01', items: 1, total: 12.50, status: 'Completed', time: '12:00 PM', date: '2024-01-14' },
+    { id: '#1005', customer: 'David Brown', table: 'T04', items: 2, total: 34.00, status: 'Cancelled', time: '01:30 PM', date: '2024-01-14' },
   ];
 
-  const filteredOrders = statusFilter === 'All' 
-    ? orders 
-    : orders.filter(o => o.status === statusFilter);
-
   const getStatusColor = (status) => {
-    if (status === "Preparing") return "bg-yellow-500";
-    if (status === "Ready") return "bg-emerald-500";
-    if (status === "Delivered") return "bg-zinc-500";
-    return "bg-blue-500";
+    const colors = {
+      Completed: 'bg-green-100 text-green-700',
+      Processing: 'bg-blue-100 text-blue-700',
+      Pending: 'bg-yellow-100 text-yellow-700',
+      Cancelled: 'bg-red-100 text-red-700'
+    };
+    return colors[status] || 'bg-gray-100 text-gray-700';
   };
 
+  const filteredOrders = orders.filter(order => {
+    const matchesSearch = order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          order.table.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filter === 'all' || order.status.toLowerCase() === filter;
+    return matchesSearch && matchesFilter;
+  });
+
   return (
-    <div className="p-6 md:p-8 bg-zinc-950 min-h-screen text-white">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">Orders</h1>
-        <div className="flex gap-3">
-          {['All', 'Preparing', 'Ready', 'Delivered'].map((status) => (
-            <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className={`px-5 py-2 rounded-2xl text-sm font-medium transition-all ${
-                statusFilter === status ? 'bg-amber-500 text-black' : 'bg-zinc-900 hover:bg-zinc-800'
-              }`}
-            >
-              {status}
-            </button>
-          ))}
-        </div>
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800">Orders</h2>
+        <p className="text-gray-600 text-sm mt-1">Manage and track customer orders</p>
       </div>
 
-      <div className="bg-zinc-900 rounded-3xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-zinc-800">
-              <th className="text-left p-6">Order ID</th>
-              <th className="text-left p-6">Table</th>
-              <th className="text-left p-6">Customer</th>
-              <th className="text-left p-6">Items</th>
-              <th className="text-left p-6">Amount</th>
-              <th className="text-left p-6">Status</th>
-              <th className="text-left p-6">Time</th>
-              <th className="p-6"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredOrders.map((order) => (
-              <tr key={order.id} className="border-b border-zinc-800 hover:bg-zinc-800/50 transition">
-                <td className="p-6 font-medium">{order.id}</td>
-                <td className="p-6">{order.table}</td>
-                <td className="p-6">{order.customer}</td>
-                <td className="p-6">{order.items} items</td>
-                <td className="p-6 font-semibold">₹{order.amount}</td>
-                <td className="p-6">
-                  <span className={`${getStatusColor(order.status)} text-black px-4 py-1 rounded-full text-sm font-medium`}>
-                    {order.status}
-                  </span>
-                </td>
-                <td className="p-6 text-zinc-400">{order.time}</td>
-                <td className="p-6">
-                  <Button variant="outline" size="sm">View Details</Button>
-                </td>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              placeholder="Search by order ID, customer, or table..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+            />
+          </div>
+        </div>
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500"
+        >
+          <option value="all">All Orders</option>
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Table</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredOrders.map((order) => (
+                <tr key={order.id} className="hover:bg-gray-50">
+                  <td className="px-5 py-3 text-sm font-medium text-gray-900">{order.id}</td>
+                  <td className="px-5 py-3 text-sm text-gray-600">{order.customer}</td>
+                  <td className="px-5 py-3 text-sm font-medium text-amber-600">{order.table}</td>
+                  <td className="px-5 py-3 text-sm text-gray-600">{order.items}</td>
+                  <td className="px-5 py-3 text-sm font-semibold text-gray-900">${order.total.toFixed(2)}</td>
+                  <td className="px-5 py-3">
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
+                      {order.status}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3 text-sm text-gray-500">{order.date}</td>
+                  <td className="px-5 py-3">
+                    <Link to={`/dashboard/orders/${order.id.slice(1)}`}>
+                      <button className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                        <Eye size={16} />
+                      </button>
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

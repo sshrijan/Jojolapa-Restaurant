@@ -1,75 +1,106 @@
-import { useState } from 'react';
-import Button from '../../components/Button';
-import Input from '../../components/Input';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 const EditMenuItem = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "Truffle Margherita Pizza",
-    price: "890",
-    category: "Pizza",
-    description: "Fresh basil, mozzarella & truffle oil",
-    image: "https://images.unsplash.com/photo-1604068549290-dea8e4f2a5a5"
+    name: 'Nasi Goreng',
+    category: 'Main Course',
+    price: '25000',
+    description: 'Fried rice with eggs and vegetables',
+    status: 'Available'
   });
+
+  useEffect(() => {
+    // Fetch item data based on id
+    console.log('Editing item:', id);
+  }, [id]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Menu Item Updated Successfully!");
+    console.log('Updating item:', formData);
+    navigate('/dashboard/menu', { replace: true });
   };
 
   return (
-    <div className="p-8 bg-zinc-950 min-h-screen text-white">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Edit Menu Item</h1>
+    <div className="max-w-2xl mx-auto">
+      <button onClick={() => navigate('/dashboard/menu', { replace: true })} className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-5">
+        <ArrowLeft size={20} />
+        Back
+      </button>
 
-        <form onSubmit={handleSubmit} className="bg-zinc-900 rounded-3xl p-8 space-y-6">
-          <Input
-            label="Dish Name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">Edit Menu Item</h2>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="Price (₹)"
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Item Name *</label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500"
+            >
+              <option value="Main Course">Main Course</option>
+              <option value="Appetizer">Appetizer</option>
+              <option value="Noodles">Noodles</option>
+              <option value="Soup">Soup</option>
+              <option value="Beverages">Beverages</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Price (Rp) *</label>
+            <input
               type="number"
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+              required
             />
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Category</label>
-              <select
-                className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 rounded-2xl"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              >
-                <option>Pizza</option>
-                <option>Main Course</option>
-                <option>Breakfast</option>
-                <option>Dessert</option>
-              </select>
-            </div>
           </div>
 
-          <Input
-            label="Description"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              rows="4"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+            />
+          </div>
 
-          <Input
-            label="Image URL"
-            value={formData.image}
-            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500"
+            >
+              <option value="Available">Available</option>
+              <option value="Out of Stock">Out of Stock</option>
+            </select>
+          </div>
 
-          <div className="flex gap-4 pt-6">
-            <Button variant="outline" className="flex-1" type="button">
-              Cancel
-            </Button>
-            <Button variant="primary" className="flex-1" type="submit">
+          <div className="flex gap-3 pt-4">
+            <button type="submit" className="flex-1 bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-lg transition-colors">
               Update Item
-            </Button>
+            </button>
+            <button type="button" onClick={() => navigate('/dashboard/menu', { replace: true })} className="flex-1 border border-gray-300 hover:bg-gray-50 py-2 rounded-lg transition-colors">
+              Cancel
+            </button>
           </div>
         </form>
       </div>
