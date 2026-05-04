@@ -1,9 +1,25 @@
-const Input = ({ label, ...props }) => {
+// components/Input.jsx
+const Input = ({ label, className = "", ...props }) => {
   return (
     <div className="space-y-1.5">
-      {label && <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{label}</label>}
+      {label && (
+        <label className="text-sm font-medium text-gray-700 block">
+          {label}
+        </label>
+      )}
       <input
-        className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl focus:outline-none focus:border-amber-500 transition-all"
+        className={`w-full px-5 py-3.5 
+          bg-white 
+          border border-gray-300 
+          rounded-2xl 
+          focus:outline-none 
+          focus:border-amber-500 
+          focus:ring-2 
+          focus:ring-amber-200 
+          transition-all
+          text-gray-900
+          placeholder:text-gray-400
+          ${className}`}
         {...props}
       />
     </div>

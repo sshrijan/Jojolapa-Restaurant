@@ -1,30 +1,51 @@
-const Dashboard = () => {
+import { Link, useLocation } from 'react-router-dom';
+
+const DashboardLayout = () => {
+  const location = useLocation();
+
+  const navItems = [
+    { name: "Dashboard", path: "/", icon: "📊" },
+    { name: "Menu", path: "/menu", icon: "🍝" },
+    { name: "Categories", path: "/categories", icon: "📂" },
+    { name: "Orders", path: "/orders", icon: "📋" },
+    { name: "Inventory", path: "/inventory", icon: "📦" },
+  ];
+
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">Good Morning, Chef 👋</h1>
-        <div className="text-right">
-          <p className="text-sm text-zinc-400">Monday, May 4th 2026</p>
-          <p className="text-emerald-400 font-medium">Restaurant Open</p>
+    <div className="flex h-screen bg-zinc-950 text-white">
+      {/* Sidebar */}
+      <div className="w-72 bg-zinc-900 border-r border-zinc-800 p-6 flex flex-col">
+        <div className="flex items-center gap-3 mb-10">
+          <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center text-2xl">
+            🍽️
+          </div>
+          <h1 className="text-2xl font-bold">Bella Vista</h1>
         </div>
+
+        <nav className="space-y-1 flex-1">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={`flex items-center gap-4 px-4 py-3 rounded-2xl text-lg transition-all ${
+                location.pathname === item.path 
+                  ? 'bg-amber-500 text-black font-medium' 
+                  : 'hover:bg-zinc-800'
+              }`}
+            >
+              <span>{item.icon}</span>
+              <span>{item.name}</span>
+            </Link>
+          ))}
+        </nav>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: "Today's Orders", value: "42", change: "+12%" },
-          { label: "Revenue", value: "₹48,290", change: "+8%" },
-          { label: "In Kitchen", value: "8", change: "3 ready" },
-          { label: "Tables Occupied", value: "17/24", change: "71%" },
-        ].map((stat, i) => (
-          <div key={i} className="bg-zinc-900 p-6 rounded-3xl">
-            <p className="text-zinc-400">{stat.label}</p>
-            <p className="text-4xl font-bold mt-2">{stat.value}</p>
-            <p className="text-emerald-400 text-sm mt-2">{stat.change}</p>
-          </div>
-        ))}
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-auto">
+        <Outlet />
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default DashboardLayout;
