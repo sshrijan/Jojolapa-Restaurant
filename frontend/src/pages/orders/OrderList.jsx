@@ -7,11 +7,11 @@ const OrderList = () => {
   const [filter, setFilter] = useState('all');
 
   const orders = [
-    { id: '#1001', customer: 'John Doe', table: 'T01', items: 3, total: 45.50, status: 'Completed', time: '10:30 AM', date: '2024-01-15' },
-    { id: '#1002', customer: 'Jane Smith', table: 'T02', items: 2, total: 28.00, status: 'Processing', time: '11:15 AM', date: '2024-01-15' },
-    { id: '#1003', customer: 'Mike Johnson', table: 'T03', items: 4, total: 67.25, status: 'Pending', time: '11:45 AM', date: '2024-01-15' },
-    { id: '#1004', customer: 'Sarah Williams', table: 'T01', items: 1, total: 12.50, status: 'Completed', time: '12:00 PM', date: '2024-01-14' },
-    { id: '#1005', customer: 'David Brown', table: 'T04', items: 2, total: 34.00, status: 'Cancelled', time: '01:30 PM', date: '2024-01-14' },
+    { id: '#1001', customer: 'Shrijan Shrestha', table: 'T01', items: 3, total: 45.50, status: 'Completed', time: '10:30 AM', date: '2024-01-15' },
+    { id: '#1002', customer: 'Abhishek Shakya', table: 'T02', items: 2, total: 28.00, status: 'Processing', time: '11:15 AM', date: '2024-01-15' },
+    { id: '#1003', customer: 'Pranil Barahi', table: 'T03', items: 4, total: 67.25, status: 'Pending', time: '11:45 AM', date: '2024-01-15' },
+    { id: '#1004', customer: 'Sachin Mali', table: 'T01', items: 1, total: 12.50, status: 'Completed', time: '12:00 PM', date: '2024-01-14' },
+    { id: '#1005', customer: 'Sasin Maharjan', table: 'T04', items: 2, total: 34.00, status: 'Cancelled', time: '01:30 PM', date: '2024-01-14' },
   ];
 
   const getStatusColor = (status) => {

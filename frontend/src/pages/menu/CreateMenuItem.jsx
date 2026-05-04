@@ -47,23 +47,6 @@ const CreateMenuItem = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
-          <select
-            value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500"
-            required
-          >
-            <option value="">Select category</option>
-            <option value="Main Course">Main Course</option>
-            <option value="Appetizer">Appetizer</option>
-            <option value="Noodles">Noodles</option>
-            <option value="Soup">Soup</option>
-            <option value="Beverages">Beverages</option>
-          </select>
-        </div>
-
-        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Price (Rp) *</label>
           <input
             type="number"

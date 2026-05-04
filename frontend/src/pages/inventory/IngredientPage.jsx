@@ -5,6 +5,8 @@ import Modal from '../../components/Modal';
 const IngredientPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({ name: '', stock: '', unit: '', minStock: '' });
 
@@ -46,8 +48,12 @@ const IngredientPage = () => {
     setEditingItem(null);
   };
 
-  const handleDelete = (id) => {
-    setIngredients(ingredients.filter(ing => ing.id !== id));
+  const handleDelete = () => {
+    if (selectedItem) {
+      setIngredients(ingredients.filter(ing => ing.id !== selectedItem.id));
+      setDeleteModalOpen(false);
+      setSelectedItem(null);
+    }
   };
 
   const getStockStatusColor = (status) => {
@@ -133,7 +139,10 @@ const IngredientPage = () => {
                         <Edit size={16} />
                       </button>
                       <button
-                        onClick={() => handleDelete(ingredient.id)}
+                        onClick={() => {
+                          setSelectedItem(ingredient);
+                          setDeleteModalOpen(true);
+                        }}
                         className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         <Trash2 size={16} />
@@ -147,6 +156,7 @@ const IngredientPage = () => {
         </div>
       </div>
 
+      {/* Add/Edit Modal */}
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editingItem ? "Edit Ingredient" : "Add Ingredient"}>
         <div className="space-y-4">
           <div>
@@ -201,6 +211,19 @@ const IngredientPage = () => {
               Cancel
             </button>
           </div>
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title="Delete Ingredient" size="sm">
+        <p className="mb-4">Delete "{selectedItem?.name}"?</p>
+        <div className="flex gap-3">
+          <button onClick={handleDelete} className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition-colors">
+            Delete
+          </button>
+          <button onClick={() => setDeleteModalOpen(false)} className="flex-1 border border-gray-300 hover:bg-gray-50 py-2 rounded-lg transition-colors">
+            Cancel
+          </button>
         </div>
       </Modal>
     </div>
