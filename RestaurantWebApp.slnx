@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="RestaurantWebApi/RestaurantWebApi.csproj" />
+  <Project Path="WebApplication1/WebApplication1.csproj" Id="fa3dc3fd-f75e-4123-9086-bc1e86c45685" />
 </Solution>

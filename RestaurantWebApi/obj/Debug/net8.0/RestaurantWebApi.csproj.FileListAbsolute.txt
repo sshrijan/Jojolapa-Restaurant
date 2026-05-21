@@ -181,3 +181,4 @@ D:\.net\RestaurantWebApp\RestaurantWebApi\obj\Debug\net8.0\refint\RestaurantWebA
 D:\.net\RestaurantWebApp\RestaurantWebApi\obj\Debug\net8.0\RestaurantWebApi.pdb
 D:\.net\RestaurantWebApp\RestaurantWebApi\obj\Debug\net8.0\RestaurantWebApi.genruntimeconfig.cache
 D:\.net\RestaurantWebApp\RestaurantWebApi\obj\Debug\net8.0\ref\RestaurantWebApi.dll
+D:\.net\RestaurantWebApp\RestaurantWebApi\obj\Debug\net8.0\RestaurantWebApi.sourcelink.json

@@ -12,7 +12,7 @@ using RestaurantWebApi.Data;
 namespace RestaurantWebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260503090845_InitialCreate")]
+    [Migration("20260510065819_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -35,17 +35,22 @@ namespace RestaurantWebApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("EntityName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("AuditLogs");
                 });
@@ -58,9 +63,6 @@ namespace RestaurantWebApi.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -92,9 +94,6 @@ namespace RestaurantWebApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -115,9 +114,6 @@ namespace RestaurantWebApi.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -156,9 +152,6 @@ namespace RestaurantWebApi.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -189,9 +182,6 @@ namespace RestaurantWebApi.Migrations
                     b.Property<Guid>("IngredientId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("MenuItemId")
                         .HasColumnType("uniqueidentifier");
 
@@ -202,6 +192,8 @@ namespace RestaurantWebApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IngredientId");
 
                     b.HasIndex("MenuItemId");
 
@@ -219,9 +211,6 @@ namespace RestaurantWebApi.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -252,9 +241,6 @@ namespace RestaurantWebApi.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<Guid>("MenuItemId")
                         .HasColumnType("uniqueidentifier");
@@ -292,9 +278,6 @@ namespace RestaurantWebApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<int>("Method")
                         .HasColumnType("int");
 
@@ -322,9 +305,6 @@ namespace RestaurantWebApi.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("ReservationTime")
                         .HasColumnType("datetime2");
@@ -360,9 +340,6 @@ namespace RestaurantWebApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -383,9 +360,6 @@ namespace RestaurantWebApi.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -414,9 +388,6 @@ namespace RestaurantWebApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("TableNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -444,9 +415,6 @@ namespace RestaurantWebApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -466,6 +434,17 @@ namespace RestaurantWebApi.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("RestaurantWebApi.Models.AuditLog", b =>
+                {
+                    b.HasOne("RestaurantWebApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RestaurantWebApi.Models.Branch", b =>
@@ -492,11 +471,19 @@ namespace RestaurantWebApi.Migrations
 
             modelBuilder.Entity("RestaurantWebApi.Models.MenuItemIngredient", b =>
                 {
-                    b.HasOne("RestaurantWebApi.Models.MenuItem", "MenuItem")
+                    b.HasOne("RestaurantWebApi.Models.Ingredient", "Ingredient")
                         .WithMany()
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RestaurantWebApi.Models.MenuItem", "MenuItem")
+                        .WithMany("MenuItemIngredients")
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Ingredient");
 
                     b.Navigation("MenuItem");
                 });
@@ -594,6 +581,11 @@ namespace RestaurantWebApi.Migrations
             modelBuilder.Entity("RestaurantWebApi.Models.Category", b =>
                 {
                     b.Navigation("MenuItems");
+                });
+
+            modelBuilder.Entity("RestaurantWebApi.Models.MenuItem", b =>
+                {
+                    b.Navigation("MenuItemIngredients");
                 });
 
             modelBuilder.Entity("RestaurantWebApi.Models.Order", b =>

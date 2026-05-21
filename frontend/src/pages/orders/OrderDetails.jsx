@@ -1,30 +1,24 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Printer, CheckCircle, MapPin } from 'lucide-react';
+import { orders } from '../../data/orders';   // ← Import from data folder
 
 const OrderDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const order = {
-    id: `#${id}`,
-    customer: 'John Doe',
-    email: 'john@example.com',
-    phone: '+62 812 3456 7890',
-    table: { number: 'T01', capacity: 4 },
-    date: '2024-01-15',
-    time: '10:30 AM',
-    status: 'Processing',
-    items: [
-      { name: 'Nasi Goreng', quantity: 2, price: 25000, total: 50000 },
-      { name: 'Mie Ayam', quantity: 1, price: 22000, total: 22000 },
-      { name: 'Es Teh Manis', quantity: 2, price: 8000, total: 16000 },
-    ],
-    subtotal: 88000,
-    tax: 8800,
-    total: 96800,
-    paymentMethod: 'Cash',
-    note: 'Extra spicy for Nasi Goreng'
-  };
+  // Find order from data
+  const foundOrder = orders.find(o => o.id === `#${id}`);
+
+  if (!foundOrder) {
+    return (
+      <div className="max-w-4xl mx-auto py-12 text-center">
+        <h2 className="text-2xl font-bold text-gray-800">Order Not Found</h2>
+        <p className="text-gray-600 mt-2">The order #{id} does not exist.</p>
+      </div>
+    );
+  }
+
+  const order = foundOrder;
 
   const updateStatus = (newStatus) => {
     console.log('Updating status to:', newStatus);
@@ -122,23 +116,23 @@ const OrderDetails = () => {
                   <tr key={index}>
                     <td className="px-4 py-2 text-sm text-gray-800">{item.name}</td>
                     <td className="px-4 py-2 text-sm text-gray-600 text-center">{item.quantity}</td>
-                    <td className="px-4 py-2 text-sm text-gray-600 text-right">Rp {item.price.toLocaleString()}</td>
-                    <td className="px-4 py-2 text-sm font-semibold text-gray-800 text-right">Rp {item.total.toLocaleString()}</td>
+                    <td className="px-4 py-2 text-sm text-gray-600 text-right">Rs {item.price.toLocaleString()}</td>
+                    <td className="px-4 py-2 text-sm font-semibold text-gray-800 text-right">Rs {item.total.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot className="border-t border-gray-200">
                 <tr>
                   <td colSpan="3" className="px-4 py-2 text-sm text-gray-600 text-right">Subtotal:</td>
-                  <td className="px-4 py-2 text-sm text-gray-800 text-right">Rp {order.subtotal.toLocaleString()}</td>
+                  <td className="px-4 py-2 text-sm text-gray-800 text-right">Rs {order.subtotal.toLocaleString()}</td>
                 </tr>
                 <tr>
                   <td colSpan="3" className="px-4 py-2 text-sm text-gray-600 text-right">Tax (10%):</td>
-                  <td className="px-4 py-2 text-sm text-gray-800 text-right">Rp {order.tax.toLocaleString()}</td>
+                  <td className="px-4 py-2 text-sm text-gray-800 text-right">Rs {order.tax.toLocaleString()}</td>
                 </tr>
                 <tr className="border-t border-gray-200">
                   <td colSpan="3" className="px-4 py-2 text-base font-bold text-gray-800 text-right">Total:</td>
-                  <td className="px-4 py-2 text-base font-bold text-amber-600 text-right">Rp {order.total.toLocaleString()}</td>
+                  <td className="px-4 py-2 text-base font-bold text-amber-600 text-right">Rs {order.total.toLocaleString()}</td>
                 </tr>
               </tfoot>
             </table>
